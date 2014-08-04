@@ -1,0 +1,22 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 'android-19'
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        applicationId "net.grobas.view"
+        minSdkVersion 8
+        targetSdkVersion 19
+        versionCode 1
+        versionName "0.1"
+    }
+
+    dependencies {
+        compile 'com.nineoldandroids:library:+'
+    }
+
+
+}
+
+

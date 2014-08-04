@@ -1,0 +1,46 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <net.grobas.view.MovingImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:clickable="true"
+            android:onClick="action"
+            android:src="@drawable/beach"
+            app:miv_load_on_create="true"
+            app:miv_max_relative_size="3"
+            app:miv_min_relative_offset="0.1"
+            app:miv_start_delay="1000"
+            app:miv_repetitions="-1"
+            app:miv_speed="100" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/image"
+            android:background="#80444444"
+            android:paddingLeft="25dp"
+            android:text="Title"
+            android:textColor="@android:color/white"
+            android:textSize="50sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image"
+            android:padding="15dp"
+            android:text="@string/text" />
+
+
+    </RelativeLayout>
+</ScrollView>
