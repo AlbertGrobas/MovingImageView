@@ -53,3 +53,6 @@ gradlew.bat
 build/
 movingimageview/build
 sample/build
+
+# other files
+*.jpg
