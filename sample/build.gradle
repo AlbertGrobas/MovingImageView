@@ -1,19 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 'android-19'
-    buildToolsVersion "20.0.0"
+    compileSdkVersion 'android-22'
+    buildToolsVersion "22.0.0"
 
     defaultConfig {
         applicationId "net.grobas.movingimageview.sample"
         minSdkVersion 8
-        targetSdkVersion 19
+        targetSdkVersion 22
         versionCode 1
         versionName "0.1"
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -21,5 +21,5 @@ android {
 
 dependencies {
     compile project(':movingimageview')
-    compile 'com.android.support:appcompat-v7:19.+'
+    compile 'com.android.support:appcompat-v7:22.+'
 }
