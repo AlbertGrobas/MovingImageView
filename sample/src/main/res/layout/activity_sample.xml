@@ -6,7 +6,7 @@
     <RelativeLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <net.grobas.view.MovingImageView
@@ -14,22 +14,25 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:clickable="true"
-            android:onClick="action"
-            android:src="@drawable/beach"
+            android:onClick="clickImage"
+            android:src="@drawable/skyline"
             app:miv_load_on_create="true"
-            app:miv_max_relative_size="3"
-            app:miv_min_relative_offset="0.1"
-            app:miv_start_delay="1000"
+            app:miv_max_relative_size="1.2"
+            app:miv_min_relative_offset="0.2"
             app:miv_repetitions="-1"
-            app:miv_speed="100" />
+            app:miv_speed="100"
+            app:miv_start_delay="1000" />
 
         <TextView
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/image"
             android:background="#80444444"
+            android:clickable="true"
+            android:onClick="clickTitle"
             android:paddingLeft="25dp"
-            android:text="Title"
+            android:text="@string/title"
             android:textColor="@android:color/white"
             android:textSize="50sp"
             android:textStyle="bold|italic" />
@@ -38,6 +41,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/image"
+            android:clickable="true"
+            android:onClick="clickText"
             android:padding="15dp"
             android:text="@string/text" />
 

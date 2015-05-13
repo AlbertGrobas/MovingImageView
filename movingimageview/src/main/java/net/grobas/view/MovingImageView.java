@@ -23,6 +23,7 @@ import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ImageView;
 
 import net.grobas.animation.MovingViewAnimator;
@@ -32,17 +33,20 @@ import net.grobas.animation.MovingViewAnimator;
  * for animation effects.
  */
 public class MovingImageView extends ImageView {
+
     //control vars
     private float canvasWidth, canvasHeight;
     private float imageWidth, imageHeight;
     private float offsetWidth, offsetHeight;
     private int movementType;
+
     //user vars
     private float maxRelativeSize, minRelativeOffset;
     private int mSpeed;
     private long startDelay;
     private int mRepetitions;
     private boolean loadOnCreate;
+
     //Our custom animator
     private MovingViewAnimator mAnimator;
 
@@ -155,6 +159,9 @@ public class MovingImageView extends ImageView {
         movementType = MovingViewAnimator.AUTO_MOVE;
         float scaleByImage = Math.max(imageWidth / canvasWidth, imageHeight / canvasHeight);
         Matrix m = new Matrix();
+        Log.d("vars", "imageW-"+imageWidth + " imageH-"+imageHeight + " canvasW-"+canvasWidth+ " canvasH-"+ canvasHeight);
+        Log.d("scalebyimage", "scaleimage-" + scaleByImage);
+        Log.i("offsets", "offsetW-" + offsetWidth + " offsetH-" + offsetHeight);
 
         //Image is too small to performs any animation, needs a scale
         if (offsetWidth == 0 && offsetHeight == 0) {
@@ -190,8 +197,14 @@ public class MovingImageView extends ImageView {
           //Enough size but too big, resize down
         } else if (scaleByImage > maxRelativeSize) {
             scale = maxRelativeSize / scaleByImage;
-        }
+            float newW = imageWidth * scale;
+            float newH = imageHeight * scale;
+            if(newW < canvasWidth || newH < canvasHeight) {
+                scale = Math.max(canvasWidth / imageWidth, canvasHeight / imageHeight);
+            }
 
+        }
+        Log.d("scale", "scale-" + scale);
         m.preScale(scale, scale);
         setImageMatrix(m);
         return scale;
@@ -200,7 +213,7 @@ public class MovingImageView extends ImageView {
     /**
      * Don't touch this!
      *
-     * @param scaleType
+     * @param scaleType deprecated for force setup to ScaleType.Matrix
      */
     @Override
     @Deprecated

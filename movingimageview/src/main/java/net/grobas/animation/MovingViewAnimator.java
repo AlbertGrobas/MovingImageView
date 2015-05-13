@@ -16,54 +16,86 @@
 
 package net.grobas.animation;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
-
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.PropertyValuesHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Create a custom animation using <code>NineOldAndroids</code> for back compatibility.
+ * Creates a custom animation.
  * There are 4 types: horizontal, vertical, diagonal and auto.
  * Auto adds all other 3 types.
  * Very beta stage yet!
  */
 public class MovingViewAnimator {
+
     //movement type vars
     public static final int HORIZONTAL_MOVE = 1;
     public static final int VERTICAL_MOVE = 2;
     public static final int DIAGONAL_MOVE = 3;
     public static final int AUTO_MOVE = 0;
     public static final int NONE_MOVE = -1;
+
     //Animators and view vars
     private AnimatorSet mAnimatorSet;
     private Animator.AnimatorListener animatorListener;
     private View mView;
+
     //helper vars
     private boolean isRunning;
-    private int movementType;
-    private float offsetWidth, offsetHeight;
+    private int currentLoop;
+    private boolean infiniteRepetition = true;
     private ArrayList<Float> pathDistances;
+
     //user vars
     private int loopCount = -1;
-    private int currentLoop;
+    private int movementType;
+    private float offsetWidth, offsetHeight;
     private int mSpeed = 50;
     private long mDelay = 0;
-    private boolean infiniteRepetition = true;
     private Interpolator mInterpolator;
+
+    private Animator.AnimatorListener repeatAnimatorListener = new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(final Animator animation) {
+            //super.onAnimationEnd(animation);
+            //View always in UI threat!
+            mView.post((new Runnable() {
+                public void run() {
+                    if (isRunning) {
+                        if (infiniteRepetition) {
+                            mAnimatorSet.start();
+                            if (animatorListener != null)
+                                animatorListener.onAnimationRepeat(animation);
+                        } else {
+                            currentLoop--;
+                            if (currentLoop > 0) {
+                                mAnimatorSet.start();
+                                if (animatorListener != null)
+                                    animatorListener.onAnimationRepeat(animation);
+                            }
+                        }
+                    }
+                }
+            }));
+        }
+    };
+
 
     public MovingViewAnimator(View imgView) {
         mView = imgView;
         isRunning = false;
         mAnimatorSet = new AnimatorSet();
-        pathDistances = new ArrayList<Float>();
+        pathDistances = new ArrayList<>();
         mInterpolator = new AccelerateDecelerateInterpolator();
     }
 
@@ -85,7 +117,7 @@ public class MovingViewAnimator {
         AnimatorSet animatorSet = new AnimatorSet();
         pathDistances.clear();
 
-        switch(movementType) {
+        switch (movementType) {
             case HORIZONTAL_MOVE:
                 animatorSet.playSequentially(createHorizontalAnimator(0, offsetWidth),
                         createHorizontalAnimator(offsetWidth, 0));
@@ -100,15 +132,15 @@ public class MovingViewAnimator {
                 break;
             case AUTO_MOVE:
                 animatorSet.playSequentially(
-                    createVerticalAnimator(0, offsetHeight),
-                    createDiagonalAnimator(0, offsetWidth, offsetHeight, 0),
-                    createHorizontalAnimator(offsetWidth, 0),
-                    createDiagonalAnimator(0, offsetWidth, 0, offsetHeight),
-                    createHorizontalAnimator(offsetWidth, 0),
-                    createVerticalAnimator(offsetHeight, 0));
+                        createVerticalAnimator(0, offsetHeight),
+                        createDiagonalAnimator(0, offsetWidth, offsetHeight, 0),
+                        createHorizontalAnimator(offsetWidth, 0),
+                        createDiagonalAnimator(0, offsetWidth, 0, offsetHeight),
+                        createHorizontalAnimator(offsetWidth, 0),
+                        createVerticalAnimator(offsetHeight, 0));
         }
 
-        if(mAnimatorSet != null) {
+        if (mAnimatorSet != null) {
             mAnimatorSet.removeAllListeners();
             stop();
         }
@@ -128,35 +160,15 @@ public class MovingViewAnimator {
      * Tricky but works.
      */
     private void updateListener() {
-        mAnimatorSet.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                //View always in UI threat!
-                mView.post((new Runnable() {
-                    public void run() {
-                        if(isRunning) {
-                            if(infiniteRepetition) {
-                                mAnimatorSet.start();
-                            } else {
-                                currentLoop--;
-                                if (currentLoop > 0) {
-                                    mAnimatorSet.start();
-                                }
-                            }
-                        }
-                    }
-                }));
-            }
-        });
+        mAnimatorSet.addListener(repeatAnimatorListener);
     }
 
     /**
      * Update animation base vars.
      *
      * @param type new movement type.
-     * @param w new width offset.
-     * @param h new height offset.
+     * @param w    new width offset.
+     * @param h    new height offset.
      */
 
     public void updateValues(int type, float w, float h) {
@@ -166,23 +178,57 @@ public class MovingViewAnimator {
         init();
     }
 
+    public void setMovementType(int type) {
+        updateValues(type, offsetWidth, offsetHeight);
+    }
+
+    public void setOffsets(float w, float h) {
+        updateValues(movementType, w, h);
+    }
+
     public void start() {
-        if(movementType != NONE_MOVE) {
+        if (movementType != NONE_MOVE) {
             isRunning = true;
-            if(!infiniteRepetition)
+            if (!infiniteRepetition)
                 currentLoop = loopCount;
             mAnimatorSet.start();
         }
     }
 
+    public void cancel() {
+        if(isRunning) {
+            mAnimatorSet.removeListener(repeatAnimatorListener);
+            mAnimatorSet.cancel();
+        }
+    }
+
+    @TargetApi(19)
+    public void pause() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+            return;
+
+        if(mAnimatorSet.isStarted())
+            mAnimatorSet.pause();
+    }
+
+    @TargetApi(19)
+    public void resume() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+            return;
+
+        if(mAnimatorSet.isPaused())
+            mAnimatorSet.resume();
+    }
+
     public void stop() {
         isRunning = false;
+        mAnimatorSet.removeListener(repeatAnimatorListener);
         mAnimatorSet.end();
         mView.clearAnimation();
     }
 
     public void setRepetition(int repetition) {
-        if(repetition < 0)
+        if (repetition < 0)
             infiniteRepetition = true;
         else {
             loopCount = repetition;
@@ -193,6 +239,11 @@ public class MovingViewAnimator {
 
     public Builder addCustomMovement() {
         return new Builder();
+    }
+
+    public void clearCustomMovement() {
+        init();
+        start();
     }
 
     public int getMovementType() {
@@ -221,7 +272,7 @@ public class MovingViewAnimator {
     public void setSpeed(int speed) {
         mSpeed = speed;
         List<Animator> listAnimator = mAnimatorSet.getChildAnimations();
-        for(int i = 0; i < listAnimator.size(); i++) {
+        for (int i = 0; i < listAnimator.size(); i++) {
             Animator a = listAnimator.get(i);
             a.setDuration(parseSpeed(pathDistances.get(i)));
         }
@@ -229,35 +280,35 @@ public class MovingViewAnimator {
 
     public void addListener(Animator.AnimatorListener listener) {
         clearListener();
-        if(listener != null) {
+        if (listener != null) {
             animatorListener = listener;
             mAnimatorSet.addListener(animatorListener);
         }
     }
 
     public void clearListener() {
-        if(animatorListener != null) {
+        if (animatorListener != null) {
             mAnimatorSet.removeListener(animatorListener);
             animatorListener = null;
         }
     }
 
     private long parseSpeed(float distance) {
-        return (long) ((distance/(float)mSpeed) * 1000f);
+        return (long) ((distance / (float) mSpeed) * 1000f);
     }
 
     private ObjectAnimator createHorizontalAnimator(float startValue, float endValue) {
-        pathDistances.add(Math.abs(startValue-endValue));
+        pathDistances.add(Math.abs(startValue - endValue));
         return createObjectAnimation("scrollX", startValue, endValue);
     }
 
     private ObjectAnimator createVerticalAnimator(float startValue, float endValue) {
-        pathDistances.add(Math.abs(startValue-endValue));
+        pathDistances.add(Math.abs(startValue - endValue));
         return createObjectAnimation("scrollY", startValue, endValue);
     }
 
     private ObjectAnimator createDiagonalAnimator(float startW, float endW, float startH, float endH) {
-        float diagonal = Pythagoras(Math.abs(startW-endW), Math.abs(startH-endH));
+        float diagonal = Pythagoras(Math.abs(startW - endW), Math.abs(startH - endH));
         pathDistances.add(diagonal);
         PropertyValuesHolder pvhX = createPropertyValuesHolder("scrollX", startW, endW);
         PropertyValuesHolder pvhY = createPropertyValuesHolder("scrollY", startH, endH);
@@ -277,14 +328,14 @@ public class MovingViewAnimator {
     }
 
     /**
-     * Class for create custom AUTO travel type.
+     * Class for create custom AUTO travel type regardless movementType var.
      */
     public class Builder {
 
         private ArrayList<Animator> mList;
 
-        Builder() {
-            mList = new ArrayList<Animator>();
+        private Builder() {
+            mList = new ArrayList<>();
             pathDistances.clear();
         }
 

@@ -19,9 +19,7 @@ To use MovingImageView, add the module into your project and start to build xml 
         android:layout_height="250dp"
         android:src="@drawable/beach"
         app:miv_load_on_create="true"
-        <-- max scale factor relative to image size -->
         app:miv_max_relative_size="3"
-        <-- min animation offset factor relative to image size  -->
         app:miv_min_relative_offset="0.1"
         app:miv_start_delay="1000"
         app:miv_repetitions="-1"
@@ -54,12 +52,6 @@ To use MovingImageView, add the module into your project and start to build xml 
             start();
 ```
 
-External libraries
-------------------------------------
-
-* [NineOldAndroids][2]
-
-
 License
 -------
 
@@ -80,4 +72,3 @@ License
 
 
 [1]: ./art/sample.gif
-[2]: https://github.com/JakeWharton/NineOldAndroids/
