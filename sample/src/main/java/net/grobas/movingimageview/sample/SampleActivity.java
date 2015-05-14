@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import net.grobas.view.MovingImageView;
 
@@ -12,8 +13,8 @@ public class SampleActivity extends AppCompatActivity {
 
     MovingImageView image;
     boolean toggleState = true;
-    boolean toggleCustomMovement = false;
-    int[] imageList = {R.drawable.skyline, R.drawable.spacecargo, R.drawable.futurecity};
+    boolean toggleCustomMovement = true;
+    int[] imageList = {R.drawable.skyline, R.drawable.futurecity, R.drawable.spacecargo, R.drawable.city};
     int pos = 0;
 
     @Override
@@ -47,8 +48,10 @@ public class SampleActivity extends AppCompatActivity {
     public void clickImage(View v) {
         if (toggleState) {
             image.getMovingAnimator().pause();
+            Toast.makeText(this, "Pause", Toast.LENGTH_SHORT).show();
         } else {
             image.getMovingAnimator().resume();
+            Toast.makeText(this, "Resume", Toast.LENGTH_SHORT).show();
         }
         toggleState = !toggleState;
     }
@@ -56,14 +59,18 @@ public class SampleActivity extends AppCompatActivity {
     public void clickTitle(View v) {
         pos = (pos + 1) >= imageList.length ? 0 : pos + 1;
         image.setImageResource(imageList[pos]);
+        toggleCustomMovement = true;
+        Toast.makeText(this, "Next picture", Toast.LENGTH_SHORT).show();
     }
 
     public void clickText(View v) {
         if(toggleCustomMovement) {
             image.getMovingAnimator().addCustomMovement().addDiagonalMoveToDownRight().addHorizontalMoveToLeft().addDiagonalMoveToUpRight()
                     .addVerticalMoveToDown().addHorizontalMoveToLeft().addVerticalMoveToUp().start();
+            Toast.makeText(this, "Custom movement", Toast.LENGTH_SHORT).show();
         } else {
             image.getMovingAnimator().clearCustomMovement();
+            Toast.makeText(this, "Default movement", Toast.LENGTH_SHORT).show();
         }
         toggleCustomMovement = !toggleCustomMovement;
     }

@@ -17,7 +17,7 @@
             android:onClick="clickImage"
             android:src="@drawable/skyline"
             app:miv_load_on_create="true"
-            app:miv_max_relative_size="1.2"
+            app:miv_max_relative_size="3.0"
             app:miv_min_relative_offset="0.2"
             app:miv_repetitions="-1"
             app:miv_speed="100"
