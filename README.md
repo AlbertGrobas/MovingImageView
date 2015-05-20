@@ -5,7 +5,7 @@ Create a custom ImageView for moving image around the screen.
 
 
 ![Demo Screenshot 1][1]
-
+![Demo Screenshot 2][2]
 
 Usage
 -----
@@ -71,4 +71,6 @@ License
 
 
 
-[1]: ./art/sample.gif
+[1]: ./art/sample01.gif
+[2]: ./art/sample02.gif
+
