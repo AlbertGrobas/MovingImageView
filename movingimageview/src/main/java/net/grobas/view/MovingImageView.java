@@ -111,7 +111,7 @@ public class MovingImageView extends ImageView {
 
     private void updateImageSize() {
         imageWidth = getDrawable().getIntrinsicWidth();
-        imageHeight = getDrawable().getMinimumHeight();
+        imageHeight = getDrawable().getIntrinsicHeight();
     }
 
     /**
@@ -154,8 +154,8 @@ public class MovingImageView extends ImageView {
      * @return image scale.
      */
     private float calculateTypeAndScale() {
-        float scale = 1f;
         movementType = MovingViewAnimator.AUTO_MOVE;
+        float scale = 1f;
         float scaleByImage = Math.max(imageWidth / canvasWidth, imageHeight / canvasHeight);
         Matrix m = new Matrix();
 
@@ -168,16 +168,16 @@ public class MovingImageView extends ImageView {
                 scale = Math.min(sW, maxRelativeSize);
                 m.setTranslate((canvasWidth - imageWidth * scale) / 2f, 0);
                 movementType = MovingViewAnimator.VERTICAL_MOVE;
+
             } else if (sW < sH) {
                 scale = Math.min(sH, maxRelativeSize);
                 m.setTranslate(0, (canvasHeight - imageHeight * scale) / 2f);
                 movementType = MovingViewAnimator.HORIZONTAL_MOVE;
+
             } else {
                 scale = Math.max(sW, maxRelativeSize);
-                if (scale == sW)
-                    movementType = MovingViewAnimator.NONE_MOVE;
-                else
-                    movementType = MovingViewAnimator.DIAGONAL_MOVE;
+                movementType = (scale == sW) ? MovingViewAnimator.NONE_MOVE :
+                        MovingViewAnimator.DIAGONAL_MOVE;
             }
 
           //Width too small to perform any horizontal animation, scale to width
@@ -193,9 +193,7 @@ public class MovingImageView extends ImageView {
           //Enough size but too big, resize down
         } else if (scaleByImage > maxRelativeSize) {
             scale = maxRelativeSize / scaleByImage;
-            float newW = imageWidth * scale;
-            float newH = imageHeight * scale;
-            if(newW < canvasWidth || newH < canvasHeight) {
+            if(imageWidth * scale < canvasWidth || imageHeight * scale < canvasHeight) {
                 scale = Math.max(canvasWidth / imageWidth, canvasHeight / imageHeight);
             }
         }

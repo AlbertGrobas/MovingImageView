@@ -1,8 +1,8 @@
 MovingImageView
 ===============
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-MovingImageView-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/1850)
 
 Create a custom ImageView for moving image around the screen.
-
 
 ![Demo Screenshot 1][1]
 ![Demo Screenshot 2][2]
@@ -17,10 +17,10 @@ To use MovingImageView, add the module into your project and start to build xml 
     <net.grobas.view.MovingImageView
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:src="@drawable/beach"
+        android:src="@drawable/image"
         app:miv_load_on_create="true"
         app:miv_max_relative_size="3"
-        app:miv_min_relative_offset="0.1"
+        app:miv_min_relative_offset="0.2"
         app:miv_start_delay="1000"
         app:miv_repetitions="-1"
         app:miv_speed="100" />

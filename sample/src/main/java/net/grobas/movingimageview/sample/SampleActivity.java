@@ -14,13 +14,14 @@ public class SampleActivity extends AppCompatActivity {
     MovingImageView image;
     boolean toggleState = true;
     boolean toggleCustomMovement = true;
-    int[] imageList = {R.drawable.skyline, R.drawable.futurecity, R.drawable.spacecargo, R.drawable.city};
+    int[] imageList = {R.drawable.anotherworld, R.drawable.futurecity, R.drawable.spacecargo, R.drawable.city};
     int pos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
+
         image = (MovingImageView) findViewById(R.id.image);
         image.getMovingAnimator().addListener(new Animator.AnimatorListener() {
             @Override
