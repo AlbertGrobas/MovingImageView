@@ -12,7 +12,7 @@ Usage
 
 To use MovingImageView, add the module into your project and start to build xml or java.
 
-###XML
+### XML
 ```xml
     <net.grobas.view.MovingImageView
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@ To use MovingImageView, add the module into your project and start to build xml 
         app:miv_speed="100" />
 ```
 
-#####Properties:
+##### Properties:
 
 * `app:miv_load_on_create` (boolean)    -> default true
 * `app:miv_max_relative_size`  (float)  -> default 3.0f
@@ -36,7 +36,7 @@ To use MovingImageView, add the module into your project and start to build xml 
 * `app:miv_speed` (integer)             -> default 50
 
 
-###JAVA
+### JAVA
 
 ```java
     MovingImageView image = (MovingImageView) findViewById(R.id.image);
